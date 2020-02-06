@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import getpass
+import sys
+import telnetlib
+
+HOST = "192.168.122.43"
+user = raw_input("Enter your telnet username: ")
+password = getpass.getpass()
+
+tn = telnetlib.Telnet(HOST)
+
+tn.read_until("Username: ")
+tn.write(user + "\n")
+if password:
+    tn.read_until("Password: ")
+    tn.write(password + "\n")
+
+#tn.write("enable\n")
+#tn.write(password + "\n")
+tn.write("conf t\n")
+for i in range(10,15):
+        tn.write("int loop " + str(i) + "\n")
+        tn.write("desc pythonscript loopback int " + str(i) + "\n")
+"""
+i=1
+while i < 5:
+        tn.write("int loop " + str(i) + "\n")
+        i += 1
+tn.write("router ospf 1\n")
+tn.write("network 0.0.0.0 255.255.255.255 area 0\n")
+"""
+tn.write("do wr mem\n")
+tn.write("\n")
+tn.write("end\n")
+tn.write("exit\n")
+
+print tn.read_all()
